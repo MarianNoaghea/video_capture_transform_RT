@@ -1,0 +1,4 @@
+# ignore executable files and object files
+video_transform
+
+*.o
