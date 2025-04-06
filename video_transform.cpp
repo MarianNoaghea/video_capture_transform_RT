@@ -22,6 +22,8 @@ int main() {
 
     while (true) {
         cv::Mat frame;
+        cv::Mat processed;
+        cv::Mat combined;
 
         /** capture frame from webcam **/
         cap >> frame;
@@ -30,7 +32,8 @@ int main() {
             break;
         }
 
-        cv::Mat processed;
+        /* force resize of frame for imshow good display */
+        cv::resize(frame, frame, cv::Size(640, 480));
 
         /** copy the original frame to processed **/
         frame.copyTo(processed);
@@ -44,8 +47,9 @@ int main() {
         /** subtract matrix: processed - full255 **/
         cv::subtract(full255, processed, processed);
 
-        /** show video **/
-        cv::imshow("Webcam", processed);
+        /** show original and processed in one window **/
+        cv::hconcat(frame, processed, combined);
+        cv::imshow("Original (Left) | Processed (Right)", combined);
 
         /** write the processed frame to output file **/
         out.write(processed);
