@@ -1,23 +1,31 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
+#define OUTPUT_WIDTH 640
+#define OUTPUT_HEIGHT 480
+#define FRAMES_PER_SECOND 30
+#define WEBCAM_INDEX 0
+#define ERR_WEBCAM -1
+#define ERR_VIDEO_WRITER -2
+#define SUCCESS 0
+
 using namespace std;
 
 int main() {
     /** open webcam **/
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(WEBCAM_INDEX);
     if (!cap.isOpened()) {
         cout << "error: cannot open webcam" << endl;
-        return -1;
+        return ERR_WEBCAM;
     }
 
     /** force the format at the output to H264 and scale video **/
     cv::VideoWriter out("output.avi", cv::VideoWriter::fourcc('H', '2', '6', '4'), 
-                        30, cv::Size(640, 480));
+                        FRAMES_PER_SECOND, cv::Size(OUTPUT_WIDTH, OUTPUT_HEIGHT));
 
     if (!out.isOpened()) {
         cout << "error: cannot open video writer" << endl;
-        return -1;
+        return ERR_VIDEO_WRITER;
     }
 
     while (true) {
@@ -33,7 +41,7 @@ int main() {
         }
 
         /* force resize of frame for imshow good display */
-        cv::resize(frame, frame, cv::Size(640, 480));
+        cv::resize(frame, frame, cv::Size(OUTPUT_WIDTH, OUTPUT_HEIGHT));
 
         /** copy the original frame to processed **/
         frame.copyTo(processed);
@@ -61,5 +69,6 @@ int main() {
     cap.release();
     out.release();
     cv::destroyAllWindows();
-    return 0;
+
+    return SUCCESS;
 }
